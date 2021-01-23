@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+            <meta name="renderer" content="webkit|ie-comp|ie-stand" />
+            <title>合作项目列表</title>
+            <meta name="description" content="天工网工程信息网是一个专业的工程信息网站，拥有近30万拟在建项目和在建工程，包含大量拟在建酒店工程信息、学校工程信息、医院工程信息等，为你节省时间提高效率，提供可免费试用工程信息。全国统一服务热线：020-66351168" />
+            <meta name="keywords" content="工程信息,工程信息网,在建工程,拟在建项目,天工网" />
+            <meta name="robots" content="all" />
+            <meta name="author" content="天工网" />
+            <meta name="Subject" content="工程信息、在建工程、拟在建项目" />
+            <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport" id="viewport">
+                <meta name="format-detection" content="telephone=no">
+<!--                    <link href="http://css.tgimg.cn/Common/mobilebase.css" rel="stylesheet" />-->
+<!--                    <link href="http://css.tgimg.cn/MProject/v2/default.css?v=201706020855" rel="stylesheet" />-->
+                    <link href="mobilebase.css" rel="stylesheet" />
+                    <link href="default.css" rel="stylesheet" />
+
+                    <script>
+                        var downloadLink = 'http://p.tgnet.com/PhoneWeb/IndexV1.0.html?isopen=1',
+                        downloadSlogan = '下载APP，找到项目共同跟进人！';
+                    </script>
+<!--                    <script type="text/javascript" src="http://js.tgimg.cn/jquery/base/jquery.min.js" charset="gb2312"></script>-->
+<!--                    <script type="text/javascript" src="http://js.tgimg.cn/MProject/v2/common.js?v=201706051212" charset="gb2312"></script>-->
+                    <script type="text/javascript" src="jquery.min.js" charset="gb2312"></script>
+                    <script type="text/javascript" src="common.js" charset="gb2312"></script>
+
+                    
+                    
+    </head>
+    <body>
+        <script>
+            window.onerror = function(err) {
+                log('window.onerror: ' + err)
+            }
+        
+        function setupWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+            if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+            window.WVJBCallbacks = [callback];
+            var WVJBIframe = document.createElement('iframe');
+            WVJBIframe.style.display = 'none';
+            WVJBIframe.src = 'https://__bridge_loaded__';
+            document.documentElement.appendChild(WVJBIframe);
+            setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
+        }
+        
+        setupWebViewJavascriptBridge(function(bridge) {
+                                     
+                                     function updateListData(projects) {
+                                        var ul = document.getElementById('projectList-ul')
+                                        for(var i=0;i < projects.length;i++){
+                                            var project = projects[i]
+                                            var li = document.createElement('li')
+                                            li.innerHTML = '<a href="ywq://ywq.tgnet.com/cooperationproject/detail?cpid='+project['cpid']+'"><h2>'+project['name']+'</h2><h3>'+project['content']+'</h3><div class="bidding-other"><span class="fr c-999">'+ project['update_date'] +'</span></div></a>'
+                                            ul.appendChild(li)
+                                        }
+                                     
+                                     }
+                                     
+                                     //注册js方法供app调用
+                                     bridge.registerHandler('TGJsHandler', function(data, responseCallback) {
+<!--                                                            log('ObjC called TGJSHandler with', data)-->
+                                                            var responseData = { 'Javascript Says':'Right back atcha!' }
+<!--                                                            log('JS responding with', responseData)-->
+                                                            responseCallback(responseData)
+                                                            })
+                                     
+                                     
+                                     bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/CooperationProjectList','param':{}}}, function(response) {
+                                                        var stateCode = response['state_code']
+                                                        if(stateCode == "0x00000000"){
+                                                            var data = response['data']
+                                                            updateListData(data['projects']);
+                                                        }
+                                                    })
+   
+                                     
+            })
+        </script>
+        
+        <div class="TG-mobile-project TGMP-primary">
+<!--            <link href="http://css.tgimg.cn/MProject/v2/bidding.css?v=201706011203" rel="stylesheet" />-->
+            <link href="bidding.css" rel="stylesheet" />
+
+            <script type="text/javascript" src="bidding.js" charset="gb2312"></script>
+            <div class="bidding-main">
+                <div class="bidding-list">
+                    <ul class="injectBiddingData" id="projectList-ul">
+                    </ul>
+                </div>
+            </div>
+            
+            
+
+            <script>
+                $(function () {
+                  var min_height = $(window).height() - $('.TGMP-header').height() - $('.TGMP-footer').outerHeight();
+                  $('.bidding-main').css("min-height", min_height + "px");
+                  $('.fun-header-left').attr('href', '/').show();
+                  })
+            </script>
+
+        </div>
+        
+        
+        
+<!--        <script type="text/javascript">-->
+<!--            alert($)-->
+<!--        </script>-->
+        
+        
+    </body>
+</html>

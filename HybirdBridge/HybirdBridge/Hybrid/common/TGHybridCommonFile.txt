@@ -1,0 +1,5 @@
+<meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport" id="viewport">
+<meta name="format-detection" content="telephone=no">
+<link href="http://css.tgimg.cn/Hybrid/common.css?v=201708051057" rel="stylesheet" />
+<script type="text/javascript" src="http://js.tgimg.cn/Common/jquery.min.js" charset="gb2312"></script>
+<script type="text/javascript" src="http://js.tgimg.cn/Common/vue.js" charset="gb2312"></script>

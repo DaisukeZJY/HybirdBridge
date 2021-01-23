@@ -1,0 +1,619 @@
+<!doctype html>
+<html>
+    <head>
+        
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<style type='text/css'>
+		html { font-family:Helvetica; color:#222; }
+		h1 { color:steelblue; font-size:24px; margin-top:24px; }
+		button { margin:0 3px 10px; font-size:12px; }
+		.logLine { border-bottom:1px solid #ccc; padding:4px 2px; font-family:courier; font-size:11px; }
+	</style>
+    
+    </head>
+    <body>
+	<h1>WebViewJavascriptBridge Demo</h1>
+	<script>
+	window.onerror = function(err) {
+		log('window.onerror: ' + err)
+	}
+
+    function setupWebViewJavascriptBridge(callback) {
+        if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+        if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+        window.WVJBCallbacks = [callback];
+        var WVJBIframe = document.createElement('iframe');
+        WVJBIframe.style.display = 'none';
+        WVJBIframe.src = 'https://__bridge_loaded__';
+        document.documentElement.appendChild(WVJBIframe);
+        setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
+    }
+
+    setupWebViewJavascriptBridge(function(bridge) {
+		var uniqueId = 1
+		function log(message, data) {
+			var log = document.getElementById('log')
+			var el = document.createElement('div')
+			el.className = 'logLine'
+			el.innerHTML = uniqueId++ + '. ' + message + ':<br/>' + JSON.stringify(data)
+			if (log.children.length) { log.insertBefore(el, log.children[0]) }
+			else { log.appendChild(el) }
+		}
+        
+                                 
+        //注册js方法供app调用
+        bridge.registerHandler('TGJsHandler', function(data, responseCallback) {
+<!--                                log('ObjC 调用 TGJSHandler 方法 参数:', data)-->
+                                var responseData = { 'js响应':'js响应!' }
+<!--                                log('JS responding with', responseData)-->
+                                responseCallback(responseData)
+                               })
+            
+                                 
+                                 /************************* 控件 *************************/
+                                 
+                                 var divTitle = document.getElementById('buttons1').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '控件部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 //导航栏设置
+                                 var callbackButton = document.getElementById('buttons1').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = '导航栏设置'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '2','eventParam':{'methor':'1','param':{'leftButton':{'type':'2','image':'back'},'rightButton':{'type':'1','content':'右边按钮'},'title':'导航栏标题'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 
+                                 //弹出框调用
+                                 var callbackButton = document.getElementById('buttons1').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = '弹出框调用'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '2','eventParam':{'methor':'2','param':{'leftButton':{'content':'左边'},'rightButton':{'content':'右边'},'title':'标题','content':'弹出框test'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //toast控件调用
+                                 var callbackButton = document.getElementById('buttons1').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'toast控件调用'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '2','eventParam':{'methor':'3','param':{'content':'toast test!'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //actionSheet控件调用
+                                 var callbackButton = document.getElementById('buttons1').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'actionSheet控件调用'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '2','eventParam':{'methor':'4','param':{'title':'actionSheet','buttons':["button1","button2","cancel"]}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //AlertTextView控件调用
+                                 var callbackButton = document.getElementById('buttons1').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'AlertTextView控件调用'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '2','eventParam':{'methor':'5','param':{'title':'AlertTextView','placeholder':'提示文案','content':'','limitWord':'10'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //TagSingleSelectView控件调用
+                                 var callbackButton = document.getElementById('buttons1').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'TagSingleSelectView控件调用'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '2','eventParam':{'methor':'6','param':{'title':'TagSingleSelectView','rightButton':{'content':'右边'},'buttons':['想要跟进','正在跟进','重点跟进','已签单','已跟完没签单','其他'],'selectButtonName':'正在跟进'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //datePickerView控件调用
+                                 var callbackButton = document.getElementById('buttons1').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'datePickerView控件调用'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '2','eventParam':{'methor':'7','param':{'title':'datePickerView','leftButton':{'content':'左边'},'rightButton':{'content':'右边'},'content':'2017-10','type':'2'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //navMemuView控件调用
+                                 var callbackButton = document.getElementById('buttons1').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'navMemuView控件调用'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '2','eventParam':{'methor':'8','param':{'buttons':['想要跟进','正在跟进','重点跟进','已签单','已跟完没签单','其他']}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //ImageBrowser控件调用
+                                 var callbackButton = document.getElementById('buttons1').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'ImageBrowser控件调用'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '2','eventParam':{'methor':'9','param':{'imageUrls':['http://pic.58pic.com/58pic/13/74/51/99d58PIC6vm_1024.jpg','http://pic.58pic.com/58pic/13/74/51/99d58PIC6vm_1024.jpg','http://pic4.nipic.com/20091217/3885730_124701000519_2.jpg'],'currentSelectIndex':'0'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //provinceSelectView控件调用
+                                 var callbackButton = document.getElementById('buttons1').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'provinceSelectView控件调用'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '2','eventParam':{'methor':'10','param':{'type':'1','content':'广西省'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //socialShareImageView控件调用
+                                 var callbackButton = document.getElementById('buttons1').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'socialShareImageView控件调用'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '2','eventParam':{'methor':'11','param':{'content':'http://pic.58pic.com/58pic/13/74/51/99d58PIC6vm_1024.jpg','type':'2'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 
+
+                                 /************************* 方法 *************************/
+                          
+                                 //CloseWebView
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'CloseWebView'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/CloseWebView','param':{}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+
+                                 //getToken
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'getToken'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetToken','param':{}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+
+                                 var divTitle = document.getElementById('buttons2').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '我的服务部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 //GetUserAuthority
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetUserAuthority'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetUserAuthority','param':{}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 
+                                 var divTitle = document.getElementById('buttons2').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '天工币部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 
+                                 //GetTGCoinCount
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetTGCoinCount'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetTGCoinCount','param':{}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //GetTGCoinHistory
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetTGCoinHistory'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetTGCoinHistory','param':{'start':'0','limit':'20'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //PostTGCoinExchange
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'PostTGCoinExchange'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/PostTGCoinExchange','param':{'areaNo':'0001','time':'6'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 var divTitle = document.getElementById('buttons2').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '任务部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 //GetTaskList
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetTaskList'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetTaskList','param':{'start':'0','limit':'20'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //PostTaskComplete
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'PostTaskComplete'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/PostTaskComplete','param':{'tid':'1'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 
+                                 
+                                 var divTitle = document.getElementById('buttons2').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '我的动态部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 //GetMyFootprint
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetMyFootprint'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetMyFootprint','param':{'start':'0','limit':'20'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+
+                                 var divTitle = document.getElementById('buttons2').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '同城活动部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 //GetActivityList
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetActivityList'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetActivityList','param':{'areaNos':['00010011'],'start':'0','limit':'20'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 
+                                 var divTitle = document.getElementById('buttons2').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '我的专属客服部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 //GetMyTrackUser
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetMyTrackUser'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetMyTrackUser','param':{'areaNo':'00010011'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 
+                                 var divTitle = document.getElementById('buttons2').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '我的项目部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 //GetMyProjectGroupList
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetMyProjectGroupList'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetMyProjectGroupList','param':{'withStatistics':true}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //PostProjectGroup
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'PostProjectGroup'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/PostProjectGroup','param':{'name':'西瓜组'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //PutProjectGroup
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'PutProjectGroup'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/PutProjectGroup','param':{'cid':7738,'name':'西瓜组11'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //DeleteProjectGroup
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'DeleteProjectGroup'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/DeleteProjectGroup','param':{'cid':7738}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //GetFavoriteProjectList
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetFavoriteProjectList'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetFavoriteProjectList','param':{'group':6,'start':0,'limit':20}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //PostFavoriteProject
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'PostFavoriteProject'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/PostFavoriteProject','param':{'group':6,'tgPid':213914}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //PutFavoriteProject
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'PutFavoriteProject'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/PutFavoriteProject','param':{'group':5,'tgPid':213914}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //DeleteFavoriteProject
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'DeleteFavoriteProject'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/DeleteFavoriteProject','param':{'tgPid':213914}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //GetViewedProjectList
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetViewedProjectList'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetViewedProjectList','param':{'start':0,'limit':20}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 var divTitle = document.getElementById('buttons2').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '招投标部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 //GetUserBiddingList
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetUserBiddingList'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetUserBiddingList','param':{'start':0,'limit':20}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //DeleteUserBidding
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'DeleteUserBidding'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/DeleteUserBidding','param':{'bid':12}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 var divTitle = document.getElementById('buttons2').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '我的笔记部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 //GetNoteList
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetNoteList'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetNoteList','param':{'start':0,'limit':20,'min':'','max':''}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //GetNoteDetail
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'GetNoteDetail'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetNoteDetail','param':{'nid':11,'type':2}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //DeleteNote
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'DeleteNote'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/DeleteNote','param':{'nid':11,'type':2}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 var divTitle = document.getElementById('buttons2').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '微信订阅部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 //WechatSubscribe
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'WechatSubscribe'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/WechatSubscribe','param':{}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 
+                                 /************************* 页面跳转 *************************/
+                                 var divTitle = document.getElementById('buttons2').appendChild(document.createElement('div'))
+                                 divTitle.innerHTML = '页面跳转部分：'
+                                 divTitle.style.fontSize = 10+'pt'
+                                 divTitle.style.color='blue'
+                                 
+                                 //本地html跳转
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'LocalPage'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '4','eventParam':{'methor':1,'param':{'url':'/user/ExampleApp.html'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 //网络url跳转
+                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))
+                                 callbackButton.innerHTML = 'WebPage'
+                                 callbackButton.onclick = function(e) {
+                                 e.preventDefault()
+                                 log('JS calling handler "TGAppHandler"')
+                                 bridge.callHandler('TGAppHandler', {'eventType': '4','eventParam':{'methor':2,'param':{'url':'https://www.baidu.com/'}}}, function(response) {
+                                                    log('JS got response', response)
+                                                    })
+                                 }
+                                 
+                                 
+                                 
+                                 
+                                 
+                                 
+<!--                                 //RefreshToken-->
+<!--                                 var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))-->
+<!--                                 callbackButton.innerHTML = 'RefreshToken'-->
+<!--                                 callbackButton.onclick = function(e) {-->
+<!--                                 e.preventDefault()-->
+<!--                                 log('JS calling handler "TGAppHandler"')-->
+<!--                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/RefreshToken','param':{}}}, function(response) {-->
+<!--                                                    log('JS got response', response)-->
+<!--                                                    })-->
+<!--                                 }-->
+                                 
+                                
+
+<!--            //获取公共数据-->
+<!--            var callbackButton = document.getElementById('buttons2').appendChild(document.createElement('button'))-->
+<!--            callbackButton.innerHTML = 'GetCommonData'-->
+<!--            callbackButton.onclick = function(e) {-->
+<!--                                 e.preventDefault()-->
+<!--                                 log('JS calling handler "TGAppHandler"')-->
+<!--                                 //地区-->
+<!--<!--                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetCommonData','param':{'type':'1'}}}, function(response) {-->-->
+<!--<!--                                                    log('JS got response', response)-->-->
+<!--<!--                                                    })-->-->
+<!--<!--                                 //类型-->-->
+<!--<!--                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetCommonData','param':{'type':'2'}}}, function(response) {-->-->
+<!--<!--                                                    log('JS got response', response)-->-->
+<!--<!--                                                    })-->-->
+<!--                                 -->
+<!--                                 //阶段-->
+<!--<!--                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetCommonData','param':{'type':'3'}}}, function(response) {-->-->
+<!--<!--                                                    log('JS got response', response)-->-->
+<!--<!--                                                    })-->-->
+<!--                                 -->
+<!--                                 //关键人-->
+<!--                                 bridge.callHandler('TGAppHandler', {'eventType': '1','eventParam':{'methor':'/Api/GetCommonData','param':{'type':'4'}}}, function(response) {-->
+<!--                                                    log('JS got response', response)-->
+<!--                                                    })-->
+<!--                                 }-->
+                                 
+
+                                 
+
+		
+
+                      
+                                 
+                                 
+	})
+	</script>
+	<div id='buttons1'></div>
+    <div id='line'>---------分割线---------</div>
+    <div id='buttons2'></div>
+    
+    
+
+    <div id='log'></div>
+</body></html>
